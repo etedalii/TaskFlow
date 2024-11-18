@@ -8,4 +8,5 @@ public record ProjectDto()
     public DateTime StartDate { get; init; }
     public DateTime EndDate { get; init; }
     public string OwnerId { get; init; }
+    public string User { get; set; }
 }

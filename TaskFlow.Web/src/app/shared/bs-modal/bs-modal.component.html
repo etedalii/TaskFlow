@@ -1,0 +1,16 @@
+<!-- Modal Structure Only -->
+<div class="modal fade" [id]="modalId" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+  <div [className]="'modal-dialog ' + sizeClass()">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">{{ title }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="onCloseModal()"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Dynamic content goes here -->
+        <ng-content></ng-content>
+      </div>
+    </div>
+  </div>
+</div>

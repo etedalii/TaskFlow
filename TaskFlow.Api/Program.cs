@@ -53,6 +53,19 @@ builder.Services.AddAuthentication(options =>
         options.TokenValidationParameters = tokenValidationParameters;
     });
 
+//For CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "TaskFlowPolicy",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
+                .WithMethods("GET", "POST", "PUT", "DELETE")
+                .WithHeaders("Content-Type","Authorization", "Accept")
+                .AllowCredentials();
+        });
+});
+
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
@@ -90,6 +103,9 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+//For Enable Cors
+app.UseCors("TaskFlowPolicy");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

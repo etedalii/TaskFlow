@@ -45,19 +45,19 @@ namespace TaskFlow.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProjectDto>>> GetProjects()
         {
-            var projects = await _context.Projects.ToListAsync();
+            var projects = await _context.Projects.Include(u => u.Owner).ToListAsync();
 
             // Map list of Project entities to list of ProjectDto
             var projectDtos = _mapper.Map<IEnumerable<ProjectDto>>(projects);
 
-            return Ok(projectDtos);  // 200 OK with project list
+            return Ok(new {data= projectDtos});  // 200 OK with project list
         }
 
         // Read a single project by ID
         [HttpGet("{id}")]
         public async Task<ActionResult<ProjectDto>> GetProjectById(int id)
         {
-            var project = await _context.Projects.FindAsync(id);
+            var project = await _context.Projects.Include(u => u.Owner).FirstOrDefaultAsync(p => p.Id == id);
             if (project == null) 
                 return NotFound();  // 404 Not Found if project doesn't exist
             

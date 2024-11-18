@@ -1,0 +1,41 @@
+<div class="row">
+    <div class="col-3 mt-2 mb-2">
+         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#projectNewModal">
+            <i class="bi bi-plus-square"></i> Create New
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col12">
+        <table class="table">
+            <thead class="table-dark">
+              <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Owner</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of projects(); track item.id) {
+                <tr>
+                    <td>{{item.name}}</td>
+                    <td>{{item.description}}</td>
+                    <td>{{item.startDate | date}}</td>
+                    <td>{{item.endDate | date}}</td>
+                    <td>{{item.user}}</td>
+                    <td>
+                        <button class="btn btn-success btn-small" (click)="onEditProject(item.id)"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-danger btn-small ms-1" (click)="onDelteProject(item.id)"><i class="bi bi-eraser"></i></button>
+                    </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+    </div>
+</div>
+
+
+  <app-project-new [projectData]="selectedProject"></app-project-new>
