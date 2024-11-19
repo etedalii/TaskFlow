@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using TaskFlow.Api.Data;
 using TaskFlow.Api.Models;
 using TaskFlow.Api.Models.Dtos;
@@ -10,6 +11,7 @@ namespace TaskFlow.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]
+    [Authorize]
     public class ProjectController : ControllerBase
     {
         private readonly ApplicationDbContext _context;

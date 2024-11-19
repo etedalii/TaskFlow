@@ -2,8 +2,17 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Project } from './project.model';
 import { ErrorService } from '../shared/error.service';
-import { catchError, map, tap, throwError } from 'rxjs';
+import {
+  catchError,
+  exhaustMap,
+  map,
+  switchMap,
+  take,
+  tap,
+  throwError,
+} from 'rxjs';
 import { environment } from '../../environments/environment';
+import { AuthService } from '../auth/auth.service';
 const headers = new HttpHeaders({
   'Content-Type': 'application/json',
 });
@@ -17,17 +26,18 @@ export class ProjectService {
   private errorService = inject(ErrorService);
   // API URL from the environment configuration
   private readonly API_URL = `${environment.apiUrl}/Project`;
+  private authService = inject(AuthService);
 
   loadedProjects = this.projects.asReadonly();
 
   getProjects() {
-    return this.fetchProjects('error').pipe(
-      tap({
-        next: (projects) => {
-          this.projects.set(projects);
-        },
-      })
-    );
+     return this.fetchProjects('error').pipe(
+        tap({
+          next: (projects) => {
+            this.projects.set(projects);
+          },
+        })
+      );
   }
 
   getProjectById(id: number) {
@@ -90,11 +100,18 @@ export class ProjectService {
   }
 
   private fetchProjects(errorMessage: string) {
-    return this.httpClient.get<{ data: Project[] }>(this.API_URL).pipe(
-      map((response) => response.data),
-      catchError((err) => {
-        return throwError(() => new Error(errorMessage));
-      })
-    );
+    /*
+, {
+        headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
+      }
+    */
+    return this.httpClient
+      .get<{ data: Project[] }>(this.API_URL,{headers})
+      .pipe(
+        map((response) => response.data),
+        catchError((err) => {
+          return throwError(() => new Error(errorMessage));
+        })
+      );
   }
 }

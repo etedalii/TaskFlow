@@ -44,7 +44,7 @@ namespace TaskFlow.Api.Controllers
 			{
 				var userExists = await _userManager.FindByEmailAsync(registerVM.EmailAddress);
 				if (userExists != null)
-					return BadRequest($"User {registerVM.EmailAddress} already exists");
+					return BadRequest(new { error =$"User {registerVM.EmailAddress} already exists"});
 
 				var applicationUser = new ApplicationUser
 				{
@@ -57,12 +57,12 @@ namespace TaskFlow.Api.Controllers
 
 				var result = await _userManager.CreateAsync(applicationUser, registerVM.Password);
 				if (!result.Succeeded)
-					return BadRequest(result.Errors);
+					return BadRequest(new { error = result.Errors });
 
 				if (registerVM.Role == UserRoles.Admin || registerVM.Role == UserRoles.Client)
 					await _userManager.AddToRoleAsync(applicationUser, registerVM.Role);
 
-				return Ok($"{applicationUser.Name} {applicationUser.LastName}");
+				return Ok(new {data = $"{applicationUser.Name} {applicationUser.LastName}"});
 			}
 
 			return BadRequest("Please provide all required fields");
@@ -80,7 +80,7 @@ namespace TaskFlow.Api.Controllers
 				return Unauthorized();
 
 			var tokenValue = await GenerateJWTTokenAsync(userExists);
-			return Ok(tokenValue);
+			return Ok( tokenValue );
 		}
 
 		[HttpPost("refresh-token")]
@@ -120,8 +120,9 @@ namespace TaskFlow.Api.Controllers
 		{
 			var authClaims = new List<Claim>
 			{
-				new Claim(ClaimTypes.Name, user.UserName),
-				new Claim(ClaimTypes.NameIdentifier, user.Id),
+				new Claim(ClaimTypes.Name, user.Name),
+				new Claim(ClaimTypes.Surname, user.LastName),
+				new Claim("Uid", user.Id),
 				new Claim(JwtRegisteredClaimNames.Email, user.Email),
 				new Claim(JwtRegisteredClaimNames.Sub, user.Email),
 				new Claim(JwtRegisteredClaimNames.Jti, Guid.CreateVersion7().ToString())
@@ -152,7 +153,7 @@ namespace TaskFlow.Api.Controllers
 				IsRevoked = false,
 				UserId = user.Id,
 				DateAdded = DateTime.UtcNow,
-				DateExpire = DateTime.UtcNow.AddMonths(3),
+				DateExpire = DateTime.UtcNow.AddHours(3),
 				Token = $"{Guid.CreateVersion7()}-{Guid.CreateVersion7()}"
 			};
 

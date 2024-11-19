@@ -3,7 +3,6 @@ import {
   DestroyRef,
   inject,
   Input,
-  input,
   OnChanges,
   signal,
   SimpleChanges,
@@ -18,6 +17,7 @@ import {
 import { BsModalComponent } from '../../shared/bs-modal/bs-modal.component';
 import { ProjectService } from '../project.service';
 import { Project } from '../project.model';
+import { AuthService } from '../../auth/auth.service';
 
 const formatDate = (date: string | Date | null) => {
   if (!date) return '';
@@ -37,6 +37,7 @@ const formatDate = (date: string | Date | null) => {
 })
 export class ProjectNewComponent implements OnChanges {
   @ViewChild(BsModalComponent) bsModal!: BsModalComponent;
+  private authService = inject(AuthService);
   form = new FormGroup({
     id: new FormControl('0'),
     name: new FormControl('', { validators: [Validators.required] }),
@@ -69,14 +70,16 @@ export class ProjectNewComponent implements OnChanges {
       return;
     }
 
+    console.log();
+
     let projec: Project = {
       id: +this.form.value.id!,
       name: this.form.value.name!,
       description: this.form.value.description!,
       startDate: new Date(this.form.value.startDate!),
       endDate: new Date(this.form.value.endDate!),
-      user: '6de85501-c457-452a-9827-7a7d6e24231d', //after Auth I need to fix TODO
-      ownerId: '6de85501-c457-452a-9827-7a7d6e24231d',
+      user: this.authService.currentUser()!.name , 
+      ownerId: this.authService.currentUser()!.id,
     };
 
     let subscription: any;
@@ -87,7 +90,6 @@ export class ProjectNewComponent implements OnChanges {
           this.errorSignal.set(error.message);
         },
         complete: () => {
-          console.log('completed');
           this.form.reset();
           // this.router.navigate(['projects'], {
           //   onSameUrlNavigation: 'reload',
@@ -96,16 +98,18 @@ export class ProjectNewComponent implements OnChanges {
         },
       });
     } else {
-      subscription = this.projectService.updateProject(projec.id,projec).subscribe({
-        error: (error: Error) => {
-          console.log(error.message);
-          this.errorSignal.set(error.message);
-        },
-        complete: () => {
-          this.form.reset();
-          this.closeModal();
-        },
-      })
+      subscription = this.projectService
+        .updateProject(projec.id, projec)
+        .subscribe({
+          error: (error: Error) => {
+            console.log(error.message);
+            this.errorSignal.set(error.message);
+          },
+          complete: () => {
+            this.form.reset();
+            this.closeModal();
+          },
+        });
     }
 
     this.destroyRef.onDestroy(() => {

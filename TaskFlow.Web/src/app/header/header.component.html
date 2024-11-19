@@ -1,22 +1,47 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-      <a class="navbar-brand" routerLink="">Task Flow</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" routerLink="projects" routerLinkActive="selected">Project</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" aria-current="page" routerLink="tasks" routerLinkActive="selected">Task</a>
-          </li>
-        </ul>
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
-      </div>
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="">Task Flow</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        @if (isAuthenticated()) {
+        <li class="nav-item">
+          <a
+            class="nav-link active"
+            aria-current="page"
+            routerLink="projects"
+            routerLinkActive="selected"
+            >Project</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            aria-current="page"
+            routerLink="tasks"
+            routerLinkActive="selected"
+            >Task</a
+          >
+        </li>
+        }
+      </ul>
+      <form class="d-flex" role="search">
+        @if(isAuthenticated()){
+          <a class="btn btn-outline-danger" style="cursor: pointer" (click)="onLogOut()">Logout</a>
+        } @else {
+          <a routerLink="/auth" class="btn btn-outline-success" style="cursor: pointer">Login</a>
+        }
+      </form>
     </div>
-  </nav>
+  </div>
+</nav>

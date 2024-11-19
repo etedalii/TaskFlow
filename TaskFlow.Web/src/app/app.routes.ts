@@ -2,24 +2,28 @@ import { Routes } from '@angular/router';
 import { ProjectsComponent } from './projects/projects.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { TaskComponent } from './task/task.component';
-import { ProjectNewComponent } from './projects/project-new/project-new.component';
+import { AuthComponent } from './auth/auth.component';
+import { AuthGuard } from './auth/auth.guard';
 
 
 export const routes: Routes = [
   {
     path: '',
     component: DashboardComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path : 'auth',
+    component: AuthComponent
   },
   {
     path: 'projects',
     component: ProjectsComponent,
-  },
-  {
-    path: 'projects/new',
-    component: ProjectNewComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'tasks',
     component: TaskComponent,
+    canActivate: [AuthGuard]
   },
 ];
